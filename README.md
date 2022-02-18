@@ -6,7 +6,7 @@
  pip install -r requirements.txt
  ```
  
-## ChapmionScale
+## ChampionScale
  A program that creates a matplotlib scatter plot representing games played on a champion
  versus the level of that summoner. Can be customized through editing values in the program
  #### Instructions
