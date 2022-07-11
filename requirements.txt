@@ -1,3 +1,5 @@
 seaborn==0.11.1
+numpy==1.20.2
 matplotlib==3.4.1
-cassiopeia==4.0.18
+cassiopeia==5.0.1
+
