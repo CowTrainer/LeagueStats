@@ -14,7 +14,7 @@ with open('clashlist.txt') as my_file:
     for line in my_file:
         players.append(line)
         
-cass.set_riot_api_key("YOUR-API-HERE")
+cass.set_riot_api_key("YOUR_API_KEY")  # Put your API Key here
 regionValue = "NA" # Switch to your own region e.g NA, EUW, KR
 
 # For every player, query for match history, and count clash wins + clash games played
@@ -38,14 +38,19 @@ for count,x in enumerate(players):
             if summoner in match.red_team.participants:
                 countWins += 1
     wins.append(countWins)
+
+# Setup scatter plot for data plotting
 sns.set(style="dark")
 fig, ax = plt.subplots()
 ax.scatter(gamesPlayed, wins)
+
 # Plot with line of best fit
 plt.plot(np.unique(gamesPlayed), np.poly1d(np.polyfit(gamesPlayed, wins, 1))(np.unique(gamesPlayed)))
 
 for i, txt in enumerate(names):
     ax.annotate(txt, (gamesPlayed[i], wins[i]))
+
+# Display chart with labels
 plt.title("The CLASH scale")    
 plt.xlabel("Clash games Played")
 plt.ylabel("Clash games Won")
