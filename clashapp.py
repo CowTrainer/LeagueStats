@@ -10,7 +10,7 @@ gamesPlayed = []
 wins = []
 names = []
 # Read in players
-with open('clashlist.txt') as my_file:
+with open('players.txt') as my_file:
     for line in my_file:
         players.append(line)
         

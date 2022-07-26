@@ -1,7 +1,7 @@
 # LeagueStats
  A store for all my programs related to League of Legends and statistics
  
- To ensure you have all required libraries to run these programs, run:
+ To ensure you have all required libraries to run these programs, run (while in the LeagueStats directory):
  ```
  pip install -r requirements.txt
  ```
@@ -11,14 +11,14 @@
  versus the level of that summoner. Can be customized through editing values in the program.
  Use this to find who is the most intense *insert champion here* gamer out of all your friends!
  #### Instructions
- 1. Insert the wanted champion, your API_KEY and the region of your summoners that you want to analyze in app.py, like this.
+ 1. Insert the wanted champion, your API_KEY and the region of your summoners that you want to analyze in championscale.py, like this.
     ```
     TARGET_CHAMPION = "Darius" # Put the champion you want to target here!
     ...
     cass.set_riot_api_key("YOUR_API_KEY")  # Put your API Key here
     cass.set_default_region("NA") # Put your Country Code here.
     ```
- 2. Edit the playerslist.txt file to include as many accounts as you want, one per line.
+ 2. Edit the players.txt file to include as many accounts as you want, one per line.
     Example:
     ```
     Hide on Bush
@@ -37,7 +37,7 @@
     cass.set_riot_api_key("YOUR_API_KEY")  # Put your API Key here
     regionValue = "NA" # Switch to your own region e.g NA, EUW, KR
     ```
- 2. Edit the clashlist.txt file to include as many accounts as you want, one per line.
+ 2. Edit the players.txt file to include as many accounts as you want, one per line.
     Example:
     ```
     Hide on Bush
@@ -51,19 +51,19 @@
 ## MasteryAnalysis
  A program that analyzes masteries and attempts to find out what the most played champion by your friends is (among other things)!
  #### Instructions
- 1. Insert your API_KEY and the region of your summoners that you want to analyze in app2.py, like this.
+ 1. Insert your API_KEY and the region of your summoners that you want to analyze in masteryanalysis.py, like this.
     ```
     cass.set_riot_api_key("YOUR_API_KEY")  # Put your API Key here
     regionValue = "NA" # Switch to your own region e.g NA, EUW, KR
     ```
- 2. Edit the players2.txt file to include as many accounts as you want, one per line.
+ 2. Edit the players.txt file to include as many accounts as you want, one per line.
     Example:
     ```
     Hide on Bush
     T1 OK GOOD YES
     Taboany
     ```
- 3. Go ahead and run the program! Two files will be modified with the resulting data, analysis.txt and highestmastery.xlsx
+ 3. Go ahead and run the program (make sure you're in the MasteryAnalysis folder)! Two files will be modified with the resulting data, analysis.txt and highestmastery.xlsx
  4. analysis.txt will have a set of data for each champion, like pictured below.
     ```
     Champion name: Yasuo
@@ -78,6 +78,6 @@
     Total mastery indicates the sum of mastery points accumulated on this champion by all players, 
     Mastery percentage indicates the total percentage of all mastery accumulated on all champions that 
     the champion indicated contributes. Everything else is fairly self explanatory.
- 5. highestmastery.xlsx will have three columns, Champion, biggest player (of that champion), and percentage of mastery they own. You can sort this by the percentage       of mastery owned to find out who the biggest one-tricks are and what champion they one trick!
+ 5. highestmastery.xlsx will have three columns, Champion, biggest player (of that champion), and percentage of mastery they own. You can sort this by the percentage of mastery owned to find out who the biggest one-tricks are and what champion they one trick!
  
  

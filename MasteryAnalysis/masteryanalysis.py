@@ -75,7 +75,7 @@ class champmast:
             self.top3.pop()
             self.top3.insert(2,(newname, newpoints))        
 
-with open('players2.txt') as my_file:
+with open('../players.txt') as my_file:
     for line in my_file:
         players.append(line)
         
@@ -125,6 +125,9 @@ for key, value in sortedict.items():
     # Write highest percentage of mastery to worksheet
     worksheet.write(row, col, key)
     worksheet.write(row, col + 1, value.top3[0][0])
-    worksheet.write(row, col + 2, "{:.2%}".format(value.top3[0][1] / value.points))
+    if(value.points == 0):
+        worksheet.write(row, col + 2, "N/A")
+    else:
+        worksheet.write(row, col + 2, "{:.2%}".format(value.top3[0][1] / value.points))
     row += 1
 workbook.close()

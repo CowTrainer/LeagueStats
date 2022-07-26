@@ -8,7 +8,7 @@ players = []
 games = []
 levels = []
 names = []
-with open('playerslist.txt') as my_file:
+with open('players.txt') as my_file:
     for line in my_file:
         players.append(line)
         
