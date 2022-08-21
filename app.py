@@ -8,7 +8,6 @@ import zipfile
 
 
 app = Flask(__name__, static_folder="assets")
-app.config['SECRET_KEY'] = '8fc3ad426af44a1cba13052d9df1ebcc'
 
 def dir_last_updated(folder):
     return str(max(os.path.getmtime(os.path.join(root_path, f))
