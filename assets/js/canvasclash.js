@@ -1,15 +1,9 @@
-// Zip xaxis data, yaxis data, and labels into one JSON object
-function zipxy(xaxis,yaxis,zvals) {
-    if (xaxis.length !== yaxis.length) return false;
-    const obj = [];
-    for (let i = 0; i < xaxis.length; i++) {
-      obj.push({x: xaxis[i], y: yaxis[i], name: zvals[i]});
-    }
-    return obj;
-  }
 // Chart clash data
 function graph(xaxis, yaxis, zvals) {
-    let data = zipxy(xaxis, yaxis, zvals);
+    let data = [];
+    for (let i = 0; i < xaxis.length; i++) {
+      data.push({x: xaxis[i], y: yaxis[i], name: zvals[i]});
+    }
     let ctx = document.getElementById('myChart');
   
     // Create data
@@ -48,19 +42,27 @@ function graph(xaxis, yaxis, zvals) {
       type: 'scatter',
       data: datas,
       options: {
+        maintainAspectRatio: true,
+        aspectRatio: 2.2,
         radius: 5,
         hoverRadius: 7,
         scales: {
           x: {
             title: {
               display: true,
-              text: 'Clash games played'
+              text: 'Clash games played',
+              font: {
+                size: 20
+              }
             }
           },
           y: {
             title: {
               display: true,
-              text: 'Clash games won'
+              text: 'Clash games won',
+              font: {
+                size: 20
+              }
             }
           }
         }
