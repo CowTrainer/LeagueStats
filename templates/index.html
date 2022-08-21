@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>League Stats</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="assets/css/styles.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+        <div class="container"><a class="navbar-brand logo" href="{{ url_for("index") }}">League Stats</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for("about") }}">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for("masteryanalysis") }}">MasteryAnalysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for("clashscale") }}">ClashScale</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for("championscale") }}">ChampionScale</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for("presets") }}">Presets</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main class="page landing-page">
+        <section class="clean-block clean-info dark">
+            <div class="container">
+                <div class="block-heading">
+                    <h2 class="text-info">Welcome to League Stats</h2>
+                    <p>A collection of web applications that allow you to chart data from League of Legends in cool ways!</p>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md-6"><img class="img-thumbnail" src="assets/img/league-of-legends-mastery-1004551.png"></div>
+                    <div class="col-md-6">
+                        <h3>MasteryAnalysis</h3>
+                        <div class="getting-started-info">
+                            <p>A program that analyzes masteries and attempts to find out what the most played champion by your friends is (among other things)<br><br></p>
+                        </div><a class="btn btn-outline-primary btn-lg" role="button" href="{{ url_for("masteryanalysis") }}">Try it!</a>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md-6" style="padding: 18px;">
+                        <h3>ClashScale</h3>
+                        <div class="getting-started-info">
+                            <p>A program that creates a scatter plot representing clash games won versus clash games played. Use this to find which one of your friends is the best clash player!<br></p>
+                        </div><a class="btn btn-outline-primary btn-lg" role="button" href="{{ url_for("clashscale") }}">Try it!</a>
+                    </div>
+                    <div class="col-md-6"><img class="img-thumbnail" src="assets/img/82b0f548-d7ee-479a-8d2c-7939653b131b.png" style="width: 527px;padding: 0px;padding-bottom: 15px;"></div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md-6"><img class="img-thumbnail" src="assets/img/all-league-of-legends-champions.jpg" style="padding: 0px;margin: 0px;padding-top: 14px;"></div>
+                    <div class="col-md-6">
+                        <h3>ChampionScale</h3>
+                        <div class="getting-started-info">
+                            <p>A program that creates a scatter plot representing mastery on a champion versus the level of that summoner. Use this to find who is the most intense&nbsp;<em>insert champion here</em>&nbsp;gamer out of all your friends!<br><br></p>
+                        </div><a class="btn btn-outline-primary btn-lg" role="button" href="{{ url_for("championscale") }}">Try it!</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="page-footer dark">
+        <div class="footer-copyright">
+            <p>© 2022 Copyright Herry Jia</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
+</body>
+
+</html>
