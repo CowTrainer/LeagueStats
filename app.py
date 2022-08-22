@@ -1,18 +1,22 @@
-from flask import Flask, render_template, request, send_file, flash, redirect, url_for
 import cassiopeia as cass
-from cassiopeia import Summoner
-import xlsxwriter
 import os
-from io import BytesIO, StringIO
+import re
+import xlsxwriter
 import zipfile
-
+from flask import Flask, render_template, request, send_file, flash, redirect, url_for
+from cassiopeia import Summoner
+from io import BytesIO, StringIO
 
 app = Flask(__name__, static_folder="assets")
+app.config['SECRET_KEY'] = "putyourownhere"
+
 
 def dir_last_updated(folder):
     return str(max(os.path.getmtime(os.path.join(root_path, f))
                    for root_path, dirs, files in os.walk(folder)
                    for f in files))
+
+
 class champmast:
     """
     A class to represent a champion and it's player dervied stats.
@@ -33,7 +37,7 @@ class champmast:
     checkupdate(newpoints, newname):
         Compare new entry to existing top 3 masters and update if necessary
     """
-    def __init__(self,points):
+    def __init__(self, points):
         """
         Constructs all the necessary attributes for the champmast object.
 
@@ -44,12 +48,12 @@ class champmast:
         """
 
         self.points = points
-        self.top3 = [("default", 0),("default2", 0), ("default3",0)]
+        self.top3 = [("default", 0), ("default2", 0), ("default3", 0)]
         self.played = 0
+
     def checkupdate(self, newpoints, newname):
         """
         Checks the top 3 masters against a new summoner entry and updates if necessary
-
 
         Parameters
         ----------
@@ -57,93 +61,96 @@ class champmast:
             points of the new summoner entry
         newname: string
             name of the new summoner entry
-        
+
         Returns
         -------
         None
         """
         if (newpoints > self.top3[0][1]):
             self.top3.pop()
-            self.top3.insert(0,(newname, newpoints))
+            self.top3.insert(0, (newname, newpoints))
         elif (newpoints > self.top3[1][1]):
             self.top3.pop()
-            self.top3.insert(1,(newname, newpoints))
+            self.top3.insert(1, (newname, newpoints))
         elif (newpoints > self.top3[2][1]):
             self.top3.pop()
-            self.top3.insert(2,(newname, newpoints))        
-
+            self.top3.insert(2, (newname, newpoints))
 
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
+
 @app.route("/about")
 def about():
     return render_template("about.html")
+
 
 @app.route("/championscale", methods=["GET", "POST"])
 def championscale():
     if request.method == "POST":
         API_KEY = request.form.get("API_KEY").strip()
         champion = request.form.get("champion")
-        players = request.form.get("playerlist").split('\n')
+        # Split by one or more newlines
+        players = re.split("(?:\r?\n){1,}", request.form.get("playerlist"))
         region = request.form.get("region")
         mastery, levels, names = ([] for i in range(3))
         cass.set_riot_api_key(API_KEY)
         # Loop through players, extract mastery on champion and player level
         for player in players:
-            summoner = Summoner(name = player.strip(), region = region)
+            playername = player.strip()
+            summoner = Summoner(name=playername, region=region)
             # Test if summoner doesn't exist or API key is invalid
             try:
-                if not summoner.exists:
-                    flash("One or more summoners are invalid.")
-                    return redirect(url_for("championscale"))
+                if playername == "" or not summoner.exists:
+                    continue
             except cass.datastores.common.HTTPError:
                 flash("API KEY is invalid.")
                 return redirect(url_for("championscale"))
             champMast = cass.get_champion_mastery(
-            champion = champion, summoner = summoner,
-            region = region,
+                champion=champion, summoner=summoner,
+                region=region,
             )
             mastery.append(champMast.points)
             levels.append(summoner.level)
-            names.append(player.strip())
-        return render_template("champresults.html", xaxis = levels, yaxis = mastery, zvals = names,
-                                last_updated = dir_last_updated("assets/js"), champion = champion.upper())
+            names.append(playername)
+        return render_template("champresults.html", xaxis=levels, yaxis=mastery, zvals=names,
+                               last_updated=dir_last_updated("assets/js"), champion=champion.upper())
     else:
         champions = []
         with open('assets/champions.txt') as my_file:
             for line in my_file:
                 champions.append(line.rstrip('\n'))
-        return render_template("championscale.html", champions = champions)
+        return render_template("championscale.html", champions=champions)
+
 
 @app.route("/clashscale", methods=["GET", "POST"])
 def clashscale():
     if request.method == "POST":
-        ## get form data
         API_KEY = request.form.get("API_KEY").strip()
-        players = request.form.get("playerlist").strip().split('\n')
+        # Split by one or more newlines
+        players = re.split("(?:\r?\n){1,}", request.form.get("playerlist"))
         region = request.form.get("region")
         gamesPlayed, wins, names = ([] for i in range(3))
         cass.set_riot_api_key(API_KEY)
         for player in players:
-            summoner = Summoner(name = player.strip(), region = region)
+            playername = player.strip()
+            summoner = Summoner(name=playername, region=region)
             # Test if summoner doesn't exist or API key is invalid
             try:
-                if not summoner.exists:
-                    flash("One or more summoners are invalid.")
-                    return redirect(url_for("clashscale"))
+                if playername == "" or not summoner.exists:
+                    continue
             except cass.datastores.common.HTTPError:
                 flash("API KEY is invalid.")
                 return redirect(url_for("clashscale"))
             match_h = cass.get_match_history(
-            continent = summoner.region.continent,
-            puuid = summoner.puuid, region = region,
-            queue = cass.data.Queue("CLASH")
+                continent=summoner.region.continent,
+                puuid=summoner.puuid, region=region,
+                queue=cass.data.Queue("CLASH")
             )
             gamesPlayed.append(len(match_h))
-            names.append(player.strip())
+            names.append(playername)
             countWins = 0
             for match in match_h:
                 # For some reason teams show up as null unless you "preload" them with a command like queue
@@ -155,28 +162,31 @@ def clashscale():
                     if summoner in match.red_team.participants:
                         countWins += 1
             wins.append(countWins)
-        return render_template("clashresults.html", xaxis = gamesPlayed, yaxis = wins, zvals = names,
-                                last_updated = dir_last_updated("assets/js"))                
+        return render_template("clashresults.html", xaxis=gamesPlayed, yaxis=wins, zvals=names,
+                               last_updated=dir_last_updated("assets/js"))
     else:
         return render_template("clashscale.html")
+
 
 @app.route("/masteryanalysis", methods=["GET", "POST"])
 def masteryanalysis():
     if request.method == "POST":
         API_KEY = request.form.get("API_KEY").strip()
-        players = request.form.get("playerlist").strip().split('\n')
+        # Strip by one or more newlines
+        players = re.split("(?:\r?\n){1,}", request.form.get("playerlist"))
         region = request.form.get("region")
         cass.set_riot_api_key(API_KEY)
+        # Champion mastery dictionary
         championsmaster = {}
         totalpoints = 0
         # Loop through players, get their mastery, and preform needed operations
         for player in players:
-            summoner = Summoner(name = player.strip(), region = region)
+            playername = player.strip()
+            summoner = Summoner(name=playername, region=region)
             # Test if summoner doesn't exist or API key is invalid
-            try: 
-                if not summoner.exists:
-                    flash("One or more summoners are invalid.")
-                    return redirect(url_for("masteryanalysis"))
+            try:
+                if playername == "" or not summoner.exists:
+                    continue
             except cass.datastores.common.HTTPError:
                 flash("API KEY is invalid.")
                 return redirect(url_for("masteryanalysis"))
@@ -192,8 +202,7 @@ def masteryanalysis():
                     championsmaster[y.champion.name].played += 1
                 # Add points to total champion mastery points
                 totalpoints += y.points
-                championsmaster[y.champion.name].checkupdate(y.points, summoner.name)
-
+                championsmaster[y.champion.name].checkupdate(y.points, playername)
 
         # Sort champion mastery dictionary by least to most mastered
         sortedict = dict(sorted(championsmaster.items(), key=lambda item: item[1].points))
@@ -216,7 +225,7 @@ def masteryanalysis():
             # Print analysis to text stream
             text.write("Champion name: " + key + '\n')
             text.write("Total mastery: " + str(value.points) + '\n')
-            text.write("Mastery percentage: " + "{:.2%}".format(value.points / totalpoints) + '\n')
+            text.write("Mastery percentage (of all): " + "{:.2%}".format(value.points / totalpoints) + '\n')
             text.write("Unique players: " + str(value.played) + '\n')
             text.write("Top 3 players\n")
             text.write("1: " + str(value.top3[0][0]) + " Points: " + str(value.top3[0][1]) + '\n')
@@ -233,16 +242,19 @@ def masteryanalysis():
                 worksheet.write(row, col + 2, "{:.2%}".format(value.top3[0][1] / value.points))
             row += 1
         workbook.close()
+
+        # Zip both in-memory files into one
         mf = BytesIO()
-        with zipfile.ZipFile(mf, mode ='w', compression=zipfile.ZIP_DEFLATED) as zf:
+        with zipfile.ZipFile(mf, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
             zf.writestr("analysis.txt", text.getvalue())
             zf.writestr("highestmastery.xlsx", spreadsheet.getvalue())
         text.close()
         spreadsheet.close()
         mf.seek(0)
-        return send_file(mf, as_attachment=True, attachment_filename='results.zip')
+        return send_file(mf, as_attachment=True, download_name='results.zip')
     else:
         return render_template("masteryanalysis.html")
+
 
 @app.route("/presets")
 def presets():
