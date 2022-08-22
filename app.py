@@ -3,12 +3,15 @@ import os
 import re
 import xlsxwriter
 import zipfile
-from flask import Flask, render_template, request, send_file, flash, redirect, url_for
+from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from cassiopeia import Summoner
 from io import BytesIO, StringIO
 
-app = Flask(__name__, static_folder="assets")
-app.config['SECRET_KEY'] = "putyourownhere"
+# AWS does not like the application named "app", mini workaround
+application = Flask(__name__, static_folder="assets")
+app = application
+
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "defaultkey")
 
 
 def dir_last_updated(folder):
@@ -251,7 +254,12 @@ def masteryanalysis():
         text.close()
         spreadsheet.close()
         mf.seek(0)
-        return send_file(mf, as_attachment=True, download_name='results.zip')
+        # Send zip file as response
+        response = Response(mf, mimetype="application/zip", direct_passthrough=True)
+        response.headers.set('Content-Type', 'application/zip')
+        response.headers.set(
+            'Content-Disposition', 'attachment', filename="results.zip")
+        return response
     else:
         return render_template("masteryanalysis.html")
 
