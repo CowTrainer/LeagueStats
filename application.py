@@ -11,6 +11,7 @@ from io import BytesIO, StringIO
 application = Flask(__name__, static_folder="assets")
 app = application
 
+# Default to defaultkey if no env variable 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "defaultkey")
 
 
